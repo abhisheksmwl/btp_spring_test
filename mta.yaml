@@ -1,0 +1,35 @@
+ID: com.example.springbootmta
+_schema-version: '3.1'
+version: 0.0.1
+description: Sample Multi-Target Application with Spring Boot
+parameters:
+  enable-parallel-deployments: true
+
+modules:
+  - name: parent
+    type: java.tomcat
+    path: .
+    build-parameters:
+      builder: custom
+      supported-platforms: []
+      commands:
+        - mvn -N install
+      timeout: 60m
+      
+  - name: springbootbe
+    type: java.tomcat
+    path: .
+    build-parameters:
+      builder: maven
+      build-result: "target/spring-boot-data-jpa-0.0.1-SNAPSHOT.jar"
+      timeout: 60m
+    properties:
+      TARGET_RUNTIME: tomcat
+      JBP_CONFIG_COMPONENTS: "jres: ['com.sap.xs.java.buildpack.jdk.SAPMachineJDK']"
+      JBP_CONFIG_SAP_MACHINE_JDK: "{ version: 17.+ }"
+
+resources:
+  - name: postgresql-db
+    type: org.cloudfoundry.existing-service
+    parameters:
+      service-name: my-postgresql-service
