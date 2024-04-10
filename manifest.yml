@@ -1,4 +1,4 @@
-----
+-----
 applications:
 - name: helloworld
   random-route: true
